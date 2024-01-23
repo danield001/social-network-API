@@ -1,12 +1,14 @@
-const mongoose = require('mongoose');
-const { ObjectId } = mongoose.Types; // Import ObjectId from mongoose.Types
+const { Schema, Types } = require('mongoose');
+function formattingDate(dateNow) {
+    return dateNow.getDate() + dateNow.getMonth() + dateNow.getYear();
+};
 
-const reactionSchema = new mongoose.Schema({
-    reactionId: { type: ObjectId, default: new ObjectId() }, // Use ObjectId type and a function to generate a new ObjectId
-    reactionBody: { type: String, required: true },
-    // limit 280 characters.
+const reactionSchema = new Schema({
+    reactionId: { type: Types.ObjectId, default: () => new Types.ObjectId(), },
+    reactionBody: { type: String, required: true, maxLength: 280 },
     username: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now,
+        get: (dateNow) => formattingDate(dateNow)},
 });
 
-module.exports = mongoose.model('Reaction', reactionSchema);
+module.exports =  reactionSchema;

@@ -1,16 +1,21 @@
-const mongoose = require('mongoose');
-const { ObjectId } = mongoose.Types;
+const { Schema, model } = require('mongoose');
+const reactionSchema = require('./reaction');
+function formattingDate(dateNow) {
+    return dateNow.getDate() + dateNow.getMonth() + dateNow.getYear();
+};
 
-const thoughtSchema = new mongoose.Schema({
-    thoughtId: { type: ObjectId, default: new ObjectId() },
-    thoughtText: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now },
-    username: { type: String, required: true },
-    reaction: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reaction' }] // Assuming reactions are stored as an array of Reaction references
+const thoughtSchema = new Schema({
+    thoughtText: { type: String, required: true, maxLength: 480, minLength: 1 },
+    createdAt: { type: Date, default: Date.now, 
+        get: (dateNow) => formattingDate(dateNow)},
+    username: { type: String, required: true, },
+    reaction: [{reactionSchema}],
 });
 
 thoughtSchema.virtual("reactionCount").get(function () {
     return this.reaction ? this.reaction.length : 0;
 });
 
-module.exports = mongoose.model('Thought', thoughtSchema);
+const Thought = model('Thought', thoughtSchema)
+
+module.exports =  Thought;

@@ -23,15 +23,24 @@ module.exports = {
     async createUser(req, res) {
         try {
             const dbUserData = await User.create(req.body);
-            res.json(dbUserData);
+            res.status(201).json(dbUserData);
         } catch (err) {
             res.status(500).json(err);
         }
     },
     async updateUser(req, res) {
         try {
-            const dbUserData = await User.updateUser(req.body);
-            res.json(dbUserData);
+            const updatedUser = await User.findByIdAndUpdate(
+                req.params.userId,
+                req.body,
+                { new: true } // Returns the modified document
+            );
+
+            if (!updatedUser) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            res.json(updatedUser);
         } catch (err) {
             res.status(500).json(err);
         }

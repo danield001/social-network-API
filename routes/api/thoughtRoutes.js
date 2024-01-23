@@ -6,10 +6,17 @@ const {
     createThought,
     updateThought,
     deleteThought,
-} = require ('../../controllers/thoughtControllers');
+    postReaction,
+    deleteReaction,
+} = require('../../controllers/thoughtControllers'); // Adjust the path accordingly
 
 router.route('/').get(getThoughts).post(createThought);
 
-router.route('/:postId').get(getSingleThought).delete(deleteThought).put(updateThought);
+router.route('/:thoughtId').get(getSingleThought).delete(deleteThought).put(updateThought);
+
+// Corrected paths for reactions
+router.route('/:thoughtId/reactions').post(postReaction);
+
+router.route('/:thoughtId/reactions/:reactionId').delete(deleteReaction);
 
 module.exports = router;
